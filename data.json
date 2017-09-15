@@ -1,0 +1,15 @@
+{
+	"products": [
+		{
+			"id": "32730290429542918140",
+			"name": "some name",
+			"variants": [
+				{
+					"name": "some variant name",
+					"price": 123123 // some variant price
+				}
+			],
+			"price": 123123 // will not be set if this.variants.length > 0
+		}
+	]
+}
