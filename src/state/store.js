@@ -4,35 +4,32 @@ import { fromJS } from 'immutable';
 
 import reducer from './reducer';
 
-
-const initialState = fromJS({
-  loading: false,
-  error: false,
-  currentUser: false,
-  userData: {
-    repositories: false,
-  },
-});
-
-const enhancers = [];
+export default function storeCreator(initialState = {}) {
 
 
-const sagaMiddleware = createSagaMiddleware();
+  const enhancers = [];
 
 
-const composedEnhancers = compose(
-  applyMiddleware(sagaMiddleware),
-  ...enhancers
-)
-
-const store = createStore(
-  reducer,
-  fromJS(initialState),
-  composedEnhancers
-);
+  const sagaMiddleware = createSagaMiddleware();
 
 
-store.runSaga = sagaMiddleware.run;
+  const composedEnhancers = compose(
+    applyMiddleware(sagaMiddleware),
+    ...enhancers
+  )
+
+  const store = createStore(
+    reducer,
+    fromJS(initialState),
+    composedEnhancers
+  );
 
 
-export default store;
+  store.runSaga = sagaMiddleware.run;
+
+  return store;
+};
+
+
+
+

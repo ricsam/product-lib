@@ -1,69 +1,49 @@
 import { fromJS } from 'immutable';
 
-/*
-
-The state for the Editing product modal.
-This will be sent to server as one big object once the Save button is
-pressed and overwrite the server version corresponding to the id in the object.
-
-{
-  "products": [
-    {
-      "id": "32730290429542918140",
-      "name": "some name",
-      "variants": [
-        {
-          "name": "some variant name",
-          "price": 123123 // some variant price
-        }
-      ],
-      "price": 123123 // will not be set if this.variants.length > 0
-    }
-  ]
-}
-*/
-
-// The initial state of the App
-const initialState = fromJS({
-  UID: '', /* falsy or id <String> */
-  loginLoading: false,
-  loginError: false,
-
-  products: [],
-
-  /* different assets that will load or maybe generate error */
-  addProductLoading: false, /* CREATE */
-  productsLoading: false, /* READ */
-  updateProductLoading: false, /* UPDATE */
-  removeProductLoading: false, /* DELETE */
-  /* pretty good to have errors for every action, ... */
-  addProductError: false,
-  productsError: false,
-  updateProductError: false,
-  removeProductError: false,
-
-});
+const initialState = fromJS({});
 
 function reducer(state = initialState, action) {
-  console.log('reducer!', state.toJSON(), action);
   switch (action.type) {
     case "@@redux/INIT":
       /* initialize */
       return state;
-    case 'LOAD_REPOS':
+    case "fb:logged in":
       return state
-        .set('loading', true)
-        .set('error', false)
-        .setIn(['userData', 'repositories'], false);
-    case 'LOAD_REPOS_SUCCESS':
+        .set('uid', action.uid)
+        .set('loginLoading', false)
+        .set('pageLoading', false)
+        .set('loginError', false);
+
+    case "fb:logged out":
       return state
-        .setIn(['userData', 'repositories'], action.repos)
-        .set('loading', false)
-        .set('currentUser', action.username);
-    case 'LOAD_REPOS_ERROR':
+        .set('uid', '')
+        .set('loginProvider', '')
+        .set('logoutLoading', false)
+        .set('pageLoading', false)
+        .set('logoutError', false);
+
+    case 'fb:logout':
       return state
-        .set('error', action.error)
-        .set('loading', false);
+        .set('logoutLoading', true)
+        .set('logoutError', false);
+
+    case "fb:login":
+      return state
+        .set('loginLoading', true)
+        .set('loginProvider', action.loginProvider) /* e.g. google or github or just anon */
+        .set('loginError', false);
+
+    case "fb:login error":
+      return state
+        .set('loginLoading', false)
+        .set('loginProvider', '')
+        .set('loginError', action.message);
+
+    case "fb:logout error":
+      return state
+        .set('logoutLoading', false)
+        .set('logoutError', action.message);
+
     default:
       return state;
   }
