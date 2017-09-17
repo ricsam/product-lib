@@ -1,0 +1,81 @@
+import React from 'react';
+import _ from 'lodash';
+import {
+  Table
+} from 'reactstrap';
+import {
+  Button,
+  If,
+  Icon
+} from './components';
+import * as util from './util';
+
+export default class ProductTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      expand: false
+    };
+  }
+  expand(id) {
+    this.setState({
+      expand: id === this.state.expand ? false : id
+    });
+  }
+  edit(id) {
+    this.props.onEdit(id);
+  }
+  render() {
+    const prods = this.props.prods;
+    if ( ! prods ) return null;
+    return (
+      <Table className="product-table">
+        <thead>
+          <tr>
+            <th>NAME</th>
+            <th>VARIANT</th>
+            <th>PRICE</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {_.flatten(_.keys(prods).map(id => {
+
+            const { name, variants, price, variantIds } = util.parseProductProperties(prods[id]);
+
+            const rows = [
+              (<tr key={id}>
+                <td>{name}</td>
+                <td>
+                  <If case={variantIds.length}>
+                    {variantIds.length}
+                    <Button className='seamless' onClick={this.expand.bind(this, id)}>{Icon('angle-' + (this.state.expand === id ? 'up' : 'down'))}</Button>
+                  </If>
+                </td>
+                <td>{price} €</td>
+                <td><Button color="link" className='seamless' onClick={this.edit.bind(this, id)}>Edit</Button></td>
+              </tr>)
+            ];
+
+
+            if (this.state.expand === id && variantIds) {
+              variantIds.forEach(variantId => {
+                rows.push(
+                  <tr key={id + '-variant-details-' + variantId} className="sub-row">
+                    <td></td>
+                    <td>{variants[variantId].name}</td>
+                    <td>{variants[variantId].price} €</td>
+                    <td></td>
+                  </tr>
+                );
+              });
+            }
+            
+            return rows;
+ 
+          }))}
+        </tbody>
+      </Table>
+    );
+  }
+}

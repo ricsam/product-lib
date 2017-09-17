@@ -78,8 +78,6 @@ export function* getDB(action) {
   const uid = action.uid;
   const products = yield call(fbLoadDB, uid);
 
-  console.log(products);
-
   yield put({
     type: 'fb:db loaded',
     products

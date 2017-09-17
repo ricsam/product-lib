@@ -18,6 +18,17 @@ button {
     cursor: pointer;
   }
 
+  &.disabled {
+    @include hover-focus {
+      cursor: auto;
+    }
+  }
+
+  &.fill {
+    width: auto;
+    max-width: auto;
+  }
+
   &.seamless {
     border: 0;
     background: transparent;
@@ -29,6 +40,9 @@ button {
     >i {
       font-size: 1rem;
     }
+  }
+  &.seamless.btn-link, &.seamless.btn-outline-link {
+    color: $link-color;
   }
 }
 
@@ -53,7 +67,31 @@ button {
   text-align: left;
 }
 
-.product-row {
+.product-grid-row {
   padding-top: $spacer;
 }
+.table {
+  .sub-row td {
+    border: 0;
+  }
+}
+.form-group.label {
+  margin-bottom: 0;
+}
 
+
+.form-separator {
+  padding-top: $spacer;
+}
+.form-spacing {
+  padding-top: $spacer * .5;
+}
+
+.form-control-warning {
+  background: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='%23f0ad4e' d='M4.4 5.324h-.8v-2.46h.8zm0 1.42h-.8V5.89h.8zM3.76.63L.04 7.075c-.115.2.016.425.26.426h7.397c.242 0 .372-.226.258-.426C6.726 4.924 5.47 2.79 4.253.63c-.113-.174-.39-.174-.494 0z'/%3E%3C/svg%3E");
+  border-color: #f0ad4e;
+  padding-right: 2.25rem;
+  background-repeat: no-repeat;
+  background-position: center right .5625rem;
+  background-size: 1.125rem 1.125rem;
+}

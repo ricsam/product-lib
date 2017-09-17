@@ -68,8 +68,6 @@ firebase.initializeApp(config);
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     // User is signed in.
-    const uid = user.uid;
-    console.log(uid);
     store.dispatch({
       type: "fb:logged in",
       uid: user.uid
