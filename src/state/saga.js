@@ -1,7 +1,3 @@
-/**
- * Gets the repositories of the user from Github
- */
-
 import { takeLatest, call, put } from 'redux-saga/effects';
 import firebase from 'firebase/app';
 
@@ -19,7 +15,7 @@ async function loginGoogle() {
   } else {
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-    const result = await firebase.auth().signInWithPopup(provider);
+    await firebase.auth().signInWithPopup(provider);
   }
 }
 
@@ -44,13 +40,13 @@ export function* login(action) {
   // OBS: an action will automatically be dispatched from index.js via firebase.auth().onAuthStateChanged 
 }
 
-async function FBLogout() {
+async function fbLogout() {
   await firebase.auth().signOut();
 }
 
 export function* logout() {
   try {
-    yield call(FBLogout);
+    yield call(fbLogout);
   } catch (error) {
     put({
       type: "fb:logout error",
@@ -65,12 +61,36 @@ export function* deleteUser() {
   yield call(user.delete);
 }
 
-/**
- * Root saga manages watcher lifecycle
- */
+
+async function fbLoadDB(uid) {
+  const db = firebase.database();
+  const ref = db.ref('products/' + uid);
+  const snapshot = await ref.once('value');
+  const data = {};
+
+  if ( snapshot.exists() ) {
+    Object.assign(data, snapshot.val());
+  }
+  return data;
+}
+
+export function* getDB(action) {
+  const uid = action.uid;
+  const products = yield call(fbLoadDB, uid);
+
+  console.log(products);
+
+  yield put({
+    type: 'fb:db loaded',
+    products
+  });
+}
+
 export function* saga() {
   yield takeLatest('fb:login', login);
   yield takeLatest('fb:logout', logout);
+  // kommer dispatchas från index.js via firebase.auth().onAuthStateChanged
+  yield takeLatest('fb:logged in', getDB);
 }
 
 export default saga;

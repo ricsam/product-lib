@@ -1,6 +1,7 @@
 import React from 'react';
 import '../styles/App.css';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import {
   Container,
@@ -8,10 +9,85 @@ import {
   Col,
   Button as BSB,
   ButtonGroup,
-  Alert
+  Alert,
+  Table
 } from 'reactstrap';
 
-const Loading = <i className="fa fa-spinner fa-spin" aria-hidden="true"></i>;
+const Icon = icon => <i className={"fa fa-" + icon} aria-hidden="true"></i>;
+const Loading = <i className="fa fa-cog fa-spin fa-lg" aria-hidden="true"></i>;
+
+class Products extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      expand: false
+    };
+  }
+  expand(id) {
+    this.setState({
+      expand: id === this.state.expand ? false : id
+    });
+  }
+  render() {
+    const prods = this.props.prods;
+    if ( ! prods ) return null;
+    return (
+      <Table className="product-table">
+        <thead>
+          <tr>
+            <th>NAME</th>
+            <th>VARIANT</th>
+            <th>PRICE</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {_.flatten(_.keys(prods).map(id => {
+            const {name, variants, price:_price} = prods[id];
+            let price = _price,
+                variantIds;
+            if ( ! _price ) {
+              variantIds = _.keys(variants);
+              // tar fram type=min/max i variant objektet
+              const ext = type => _.at(variants, _[type + 'By'](variantIds, id=>variants[id].price) + ".price")
+              // pris ansätts till min_pris - max_pris
+              price = `${ext('min')} - ${ext('max')}`;
+              console.log(price);
+            }
+            const rows = [
+              (<tr key={id}>
+                <td>{name}</td>
+                <td>
+                  <If case={! _price }>
+                    {variantIds.length} <Button className='seamless' onClick={this.expand.bind(this, id)}>{Icon('angle-' + (this.state.expand === id ? 'up' : 'down'))}</Button>
+                  </If>
+                </td>
+                <td>{price} €</td>
+                <td></td>
+              </tr>)
+            ];
+
+            if (this.state.expand === id && variantIds) {
+              variantIds.forEach(variantId => {
+                rows.push(
+                  <tr key={id + '-variant-details-' + variantId}>
+                    <td></td>
+                    <td>{variants[variantId].name}</td>
+                    <td>{variants[variantId].price} €</td>
+                    <td></td>
+                  </tr>
+                );
+              });
+            }
+            
+            return rows;
+ 
+          }))}
+        </tbody>
+      </Table>
+    );
+  }
+}
 
 class Button extends React.PureComponent {
   render() {
@@ -41,6 +117,7 @@ const loginButton = (ctx, provider) => (
   </Button>
 );
 
+// plattar till koden lite, renderas i App då this.props.uid === ''
 const Login = ctx => (
   <div className="login">
     <h2>Login</h2>
@@ -52,6 +129,7 @@ const Login = ctx => (
   </div>
 );
 
+// Komponent som efterliknar {bool && <Component />} = <If case={bool}><Component /></If>
 class If extends React.PureComponent {
   render() {
     if (this.props.case) return <div>{this.props.children}</div>;
@@ -60,6 +138,10 @@ class If extends React.PureComponent {
 }
 
 class App extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    _.bindAll(this, 'login', 'logout');
+  }
   login(provider) {
     this.props.login(provider);
   }
@@ -99,14 +181,34 @@ class App extends React.PureComponent {
                   {Login(this)}
                 </If>
                 <If case={this.props.uid}>
-                  <Button
-                    color="danger"
-                    className='logout'
-                    onClick={this.logout.bind(this)}
-                    loading={this.props.logoutLoading}
-                  >
-                    Logout
-                  </Button>
+                  <Container fluid>
+                    <Row>
+                      <Col className='text-right'>
+                        <ButtonGroup>
+                          <Button>Add product {Icon('plus fa-lg')}</Button>
+                          <Button color="danger">Delete account {Icon('close fa-lg')}</Button>
+                          <Button
+                            color="warning"
+                            className='logout'
+                            onClick={this.logout}
+                            loading={this.props.logoutLoading}
+                          >
+                            Logout {Icon('power-off fa-lg')}
+                          </Button>
+                        </ButtonGroup>
+                      </Col>
+                    </Row>
+                    <Row className='product-row'>
+                      <Col>
+                        <If case={this.props.productsLoading}>
+                          Loading products {Loading}
+                        </If>
+                        <If case={_.keysIn(this.props.products).length}>
+                          <Products prods={this.props.products} />
+                        </If>
+                      </Col>
+                    </Row>
+                  </Container>
                 </If>
               </Col>
             </Row>

@@ -17,6 +17,19 @@ button {
   @include hover-focus {
     cursor: pointer;
   }
+
+  &.seamless {
+    border: 0;
+    background: transparent;
+    color: $black;
+    padding: 0 5px;
+    margin: 0;
+    box-sizing: border-box;
+    margin-top: -2px;
+    >i {
+      font-size: 1rem;
+    }
+  }
 }
 
 .login {
@@ -33,5 +46,14 @@ button {
   .logout {
     float: right;
   }
+}
+
+
+.product-table {
+  text-align: left;
+}
+
+.product-row {
+  padding-top: $spacer;
 }
 

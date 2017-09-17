@@ -32,7 +32,7 @@ const initialState = {
   loginLoading: false,
   loginError: false,
 
-  products: [],
+  products: {},
 
   /* different assets that will load or maybe generate error */
   addProductLoading: false, /* CREATE */
