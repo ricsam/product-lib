@@ -4,7 +4,7 @@ import {Button as BSB, ButtonGroup} from 'reactstrap';
 // Komponent som efterliknar {bool && <Component />} = <If case={bool}><Component /></If>
 export class If extends React.PureComponent {
   render() {
-    if (this.props.case) return <div>{this.props.children}</div>;
+    if (this.props.case) return React.createElement(this.props.el || 'div', null, this.props.children);
     return null;
   }
 }

@@ -25,7 +25,7 @@ import _ from 'lodash';
 import * as util from './util';
 
 
-class EditItem extends React.Component {
+class EditItem extends React.PureComponent {
 
   constructor(props) {
     super(props);

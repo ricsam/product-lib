@@ -12,6 +12,7 @@ import {
   Col,
   ButtonGroup,
   Alert,
+  UncontrolledTooltip
 } from 'reactstrap';
 
 import {
@@ -28,7 +29,7 @@ import ProductTable from './ProductTable'
 class App extends React.PureComponent {
   constructor(props) {
     super(props);
-    _.bindAll(this, 'login', 'logout', 'editItem', 'addItem', 'saveItem','updateItem', 'deleteItem');
+    _.bindAll(this, 'login', 'logout', 'deleteAccount', 'editItem', 'openAddItemModal', 'addItem','updateItem', 'deleteItem');
     this.state = {
       editItem: false,
       newProds: {},
@@ -42,43 +43,49 @@ class App extends React.PureComponent {
   logout() {
     this.props.logout();
   }
+  deleteAccount() {
+    if ( ! (this.props.credential || this.props.loginProvider === 'anon') ) return;
+    this.props.dispatch({
+      type: 'fb:delete user'
+    });
+  }
   editItem(item) {
     this.setState({
       editItem: this.state.editItem ? false : item
     });
   }
-  addItem() {
+  openAddItemModal() {
     this.editItem(uuid());
   }
-  saveItem(id, data) {
+  addItem(id, data) {
     this.props.dispatch({
-      type: "fb:add product",
+      type: "fb:upload",
+      operation: "add",
       id,
       data,
     });
     this.setState({
-      newProds: _.set({...this.state.newProds}, id, data),
       editItem: false
     });
   }
   updateItem(id, data) {
     this.props.dispatch({
-      type: "fb:edit product",
+      type: "fb:upload",
+      operation: "update",
       id,
       data,
     });
     this.setState({
-      updatedProds: _.set({...this.state.updatedProds}, id, data),
       editItem: false,
     });
   }
   deleteItem(id) {
     this.props.dispatch({
-      type: "fb:delete product",
+      type: "fb:upload",
+      operation: "delete",
       id,
     });
     this.setState({
-      deletedProds: ([id]).concat(this.state.deletedProds),
       editItem: false,
     });
   }
@@ -96,12 +103,13 @@ class App extends React.PureComponent {
     return (
       <div className="App">
 
+        {/* Modal som öppnas */}
         <If case={this.state.editItem}>
           <EditItem
             newItem={!_.has(this.props.products, this.state.editItem)/* if it is an already existing item or not*/} 
             item={this.state.editItem}
             onClose={this.editItem /* as the item is undefined this works*/}
-            onSave={this.saveItem}
+            onSave={this.addItem}
             onDelete={this.deleteItem}
             onUpdate={this.updateItem}
             data={this.props.products}
@@ -133,8 +141,14 @@ class App extends React.PureComponent {
                     <Row>
                       <Col className='text-right'>
                         <ButtonGroup>
-                          <Button onClick={this.addItem}>Add product {Icon('plus fa-lg')}</Button>
-                          <Button color="danger">Delete account {Icon('close fa-lg')}</Button>
+                          <Button onClick={this.openAddItemModal}>Add product {Icon('plus fa-lg')}</Button>
+                          <Button color="danger" id="delete-account" onClick={this.deleteAccount} className={(!this.props.credential && this.props.loginProvider !== 'anon') ? "look-disabled" : ''}>Delete account {Icon('close fa-lg')}</Button>
+                          <If case={!this.props.credential && this.props.loginProvider !== 'anon'}>
+                            <UncontrolledTooltip placement="top" target="delete-account">
+                              Log out and log in to enable account deletion
+                            </UncontrolledTooltip>
+                          </If>
+
                           <Button
                             color="warning"
                             className='logout'

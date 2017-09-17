@@ -33,17 +33,8 @@ const initialState = {
   loginError: false,
 
   products: {},
-
-  /* different assets that will load or maybe generate error */
-  addProductLoading: false, /* CREATE */
   productsLoading: false, /* READ */
-  updateProductLoading: false, /* UPDATE */
-  removeProductLoading: false, /* DELETE */
-  /* pretty good to have errors for every action, ... */
-  addProductError: false,
   productsError: false,
-  updateProductError: false,
-  removeProductError: false,
 
 };
 
@@ -66,11 +57,15 @@ store.runSaga(saga);
 firebase.initializeApp(config);
 
 firebase.auth().onAuthStateChanged(function(user) {
+  const providerMapping = {
+    "google.com": 'google'
+  };
   if (user) {
     // User is signed in.
     store.dispatch({
       type: "fb:logged in",
-      uid: user.uid
+      uid: user.uid,
+      loginProvider: user.providerData.length ? providerMapping[user.providerData[0].providerId] : 'anon'
     });
   } else {
     // User is signed out.

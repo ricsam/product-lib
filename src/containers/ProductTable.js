@@ -6,11 +6,12 @@ import {
 import {
   Button,
   If,
-  Icon
+  Icon,
+  Loading
 } from './components';
 import * as util from './util';
 
-export default class ProductTable extends React.Component {
+export default class ProductTable extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -44,8 +45,13 @@ export default class ProductTable extends React.Component {
             const { name, variants, price, variantIds } = util.parseProductProperties(prods[id]);
 
             const rows = [
-              (<tr key={id}>
-                <td>{name}</td>
+              (<tr key={id} className={prods[id].status && prods[id].status.state === 'uploading' && prods[id].status.operation === 'delete' && 'disabled'}>
+                <td>
+                  <If case={prods[id].status && prods[id].status.state === 'uploading'} el="span">
+                    {Loading}{" "}
+                  </If>
+                  {name}
+                </td>
                 <td>
                   <If case={variantIds.length}>
                     {variantIds.length}
