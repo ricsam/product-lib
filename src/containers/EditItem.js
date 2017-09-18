@@ -150,7 +150,9 @@ class EditItem extends React.PureComponent {
                   value={this.state.name}
                   onChange={this.updateName}
                   case={this.state.name === ""}
-                />
+                >
+                  The name cannot be empty
+                </TooltippedInput>
               </Col>
               <Col xs="6">
                 <Input

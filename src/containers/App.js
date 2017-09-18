@@ -96,8 +96,6 @@ class App extends React.PureComponent {
   }
 
   render() {
-    // Visar bara första errorn som dyker upp, men skulle kunna ange varje potentiell error på specifika komponenter 
-
     return (
       <div className="App">
 
@@ -124,41 +122,38 @@ class App extends React.PureComponent {
           </If>
 
         </div>
-        {/* If */ this.props.pageLoading
-          /* Then: */
-          ? <div>Loading Loading <Loading /></div>
-          /* Else : */
-          : <div className="main-content">
-              {/* not logged in */}
-              <If case={!this.props.uid}>
-                {Login(this)}
-              </If>
-              {/* not logged in */}
-              <If case={this.props.uid}>
-                <Container>
-                  {/* Knappar: Add product, Delete accout, Logout*/}
-                  <ActionButtons
-                    {..._.pick(this.props, 'credential', 'loginProvider', 'logoutLoading')}
-                    logout={this.logout}
-                    openModal={this.openAddItemModal}
-                    delete={this.deleteAccount}
-                  />
-                  {/* Själva produkttabellen */}
-                  <Row className='product-grid-row'>
-                    <Col>
-                      <If case={this.props.productsLoading}>
-                        Loading products <Loading />
-                      </If>
-                      <If case={_.keys(this.props.products).length}>
-                        <ProductTable prods={this.props.products} onEdit={this.editItem.bind(this)}/>
-                      </If>
-                    </Col>
-                  </Row>
-                </Container>
-              </If>
-            </div>
+        {/*If */ this.props.pageLoading
+        /* Then: */
+        ? <div>Loading Loading <Loading /></div>
+        /* Else : */
+        : <div className="main-content">
+            {/*If */ !this.props.uid /* -> if logged in*/
+            /* Then: */
+            ? Login(this)
+            /* Else: */
+            : <Container>
+                {/* Knappar: Add product, Delete accout, Logout*/}
+                <ActionButtons
+                  {..._.pick(this.props, 'credential', 'loginProvider', 'logoutLoading')}
+                  logout={this.logout}
+                  openModal={this.openAddItemModal}
+                  delete={this.deleteAccount}
+                />
+                {/* Själva produkttabellen */}
+                <Row className='product-grid-row'>
+                  <Col>
+                    <If case={this.props.productsLoading}>
+                      Loading products <Loading />
+                    </If>
+                    <If case={_.keys(this.props.products).length}>
+                      <ProductTable prods={this.props.products} onEdit={this.editItem.bind(this)}/>
+                    </If>
+                  </Col>
+                </Row>
+              </Container>
+            }
+          </div>
         }
-        
       </div>
     );
   }
