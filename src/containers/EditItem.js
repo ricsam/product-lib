@@ -9,16 +9,14 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Label,
   Input,
-  UncontrolledTooltip
 } from 'reactstrap';
 
 
 import {
   Button,
   Icon,
-  If
+  TooltippedInput,
 } from './components';
 
 import _ from 'lodash';
@@ -45,41 +43,11 @@ class EditItem extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    _.bindAll(this, 'close', 'update', 'save', 'delete', 'addVariant', 'updatePrice', 'updateName');
-
+    _.bindAll(this, 'close', 'update', 'save', 'delete', 'addVariant', 'updatePrice', 'updateName', 'updateVariantName');
     this.state = {
       name: "",
       price: 0
     }
- 
-  }
-
-  close() {
-    this.props.onClose();
-  }
-
-  update() {
-    this.props.onUpdate(this.props.item, this.state);
-  }
-  save() {
-    this.props.onSave(this.props.item, this.state);
-  }
-  formIsOkey() {
-    return this.state.name !== "" && ( !this.variants || _.every(_.keys(this.state.variants), id => this.state.variants[id].name !== "" ) );
-  }
-  delete() {
-    this.props.onDelete(this.props.item);
-  }
-
-
-  addVariant() {
-    this.setState({
-      price: null,
-      variants: _.set({...(this.state.variants || {})}, uuid(), {
-        name: "",
-        price: 0
-      }),
-    });
   }
 
   componentWillMount() {
@@ -94,26 +62,48 @@ class EditItem extends React.PureComponent {
       })
     }
   }
-  updateName(ev) {
+
+  close() {
+    this.props.onClose();
+  }
+  update() {
+    this.props.onUpdate(this.props.item, this.state);
+  }
+  save() {
+    this.props.onSave(this.props.item, this.state);
+  }
+  formIsOkey() {
+    return this.state.name !== "" && ( !this.variants || _.every(_.keys(this.state.variants), id => this.state.variants[id].name !== "" ) );
+  }
+  delete() {
+    this.props.onDelete(this.props.item);
+  }
+  addVariant() {
+    this.setState({
+      price: null,
+      variants: _.set({...(this.state.variants || {})}, uuid(), {
+        name: "",
+        price: 0
+      }),
+    });
+  }
+  updateName(id, ev) {
     const name = ev.currentTarget.value;
     this.setState({
       name
     });
   }
-
   updatePrice(ev) {
     const price = Number(ev.currentTarget.value);
     this.setState({
       price
     });
   }
-
   updateVariantName(id, ev) {
     this.setState({
       variants: _.set({...this.state.variants}, `${id}.name`, ev.currentTarget.value)
     });
   }
-
   updateVariantPrice(id, ev) {
     let value = Number(ev.currentTarget.value);
     if ((isNaN(value) || value < 0) && ev.currentTarget.value !== "") value = this.state.variants[id].price;
@@ -121,7 +111,6 @@ class EditItem extends React.PureComponent {
       variants: _.set({...this.state.variants}, `${id}.price`, value)
     });
   }
-
   deleteVariant(id, ev) {
     console.log(id);
     const variants = _.omit(this.state.variants, id)
@@ -150,17 +139,18 @@ class EditItem extends React.PureComponent {
         <ModalBody>
           <Container className="form-container">
             <Row label>
-              <Col xs="6"><Label for="name" xs="6">Name</Label></Col>
-              <Col xs="6"><Label for="price" xs="6">Price</Label></Col>
+              <Col xs="6">Name</Col>
+              <Col xs="6">Price</Col>
             </Row>
             <Row>
               <Col xs="6">
-                <Input type="text" id={"item-" + this.state.item} className={(this.state.name === "" ? 'form-control-warning' : '')} onChange={this.updateName} value={this.state.name} />
-                <If case={this.state.name === ""}>
-                  <UncontrolledTooltip placement="top" target={"item-" + this.state.item}>
-                    The name cannot be empty
-                  </UncontrolledTooltip>
-                </If>
+                <TooltippedInput
+                  id={"item-" + this.state.item}
+                  className={this.state.name === '' ? 'form-control-warning' : ''}
+                  value={this.state.name}
+                  onChange={this.updateName}
+                  case={this.state.name === ""}
+                />
               </Col>
               <Col xs="6">
                 <Input
@@ -178,7 +168,7 @@ class EditItem extends React.PureComponent {
                 <h5>Variants</h5>
               </Col>
             </Row>
-            <Row label>
+            <Row>
               <Col xs="6">Variant name</Col>
               <Col xs="6">Variant price</Col>
             </Row>
@@ -186,12 +176,15 @@ class EditItem extends React.PureComponent {
               return (
                 <Row key={id} className="form-spacing">
                   <Col xs="6">
-                    <Input type="text" id={"variant-" + id} className={(this.state.variants[id].name === "" ? 'form-control-warning' : '')} value={this.state.variants[id].name} onChange={this.updateVariantName.bind(this, id)} />
-                    <If case={this.state.variants[id].name === ""}>
-                      <UncontrolledTooltip placement="top" target={"variant-" + id}>
-                        The name cannot be empty
-                      </UncontrolledTooltip>
-                    </If>
+                    <TooltippedInput
+                      id={id}
+                      className={this.state.variants[id].name === '' ? 'form-control-warning' : ''}
+                      value={this.state.variants[id].name}
+                      onChange={this.updateVariantName}
+                      case={this.state.variants[id].name === ''}
+                    >
+                      The name cannot be empty
+                    </TooltippedInput>
                   </Col>
                   <Col xs="6">
                     <Row className="no-gutters">

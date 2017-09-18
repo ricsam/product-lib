@@ -5,7 +5,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 [Demo](https://product-library.firebaseapp.com/)
 
-**Upp and running**:
+**Up and running**:
 1. git clone https://github.com/iZettle/web-home-assignment_richard-samuelsson.git product-library
 2. git checkout THIS_BRANCH
 3. cd product-library
@@ -18,3 +18,18 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
   - yarn run eject
 
 **OBS: I have not written many tests.**
+
+```
++---public                        > Contains some static browser related assets
+\---src                           > The project lives in this folder
+    +---containers                > First-letter uppercase files indicate containers,
+                                  ⤷ components.js contains some stateless components
+    +---state                     > Files which handles the Redux store
+    +---styles                    > App.scss contains some specific styling
+    |   +---bs                    > Bootstrap
+    |   |   +---mixins
+    |   |   \---utilities
+    |   +---fa                    > font awesome
+    |   \---fonts                 > font awesome fonts
+    \---tests                     > saga.test.js contains boilerplate testing code for the sagas.
+```

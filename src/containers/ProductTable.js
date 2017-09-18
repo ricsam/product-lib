@@ -83,7 +83,7 @@ export default class ProductTable extends React.PureComponent {
               (<tr key={id} className={prods[id].status && prods[id].status.state === 'uploading' && prods[id].status.operation === 'delete' && 'disabled'}>
                 <td>
                   <If case={prods[id].status && prods[id].status.state === 'uploading'} el="span">
-                    {Loading}{" "}
+                    <Loading />{" "}
                   </If>
                   {name}
                 </td>

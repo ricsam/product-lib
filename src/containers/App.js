@@ -10,17 +10,14 @@ import {
   Container,
   Row,
   Col,
-  ButtonGroup,
   Alert,
-  UncontrolledTooltip
 } from 'reactstrap';
 
 import {
-  Button,
-  Icon,
   Loading,
   Login,
-  If
+  If,
+  ActionButtons
 } from './components';
 
 import ProductTable from './ProductTable'
@@ -98,33 +95,6 @@ class App extends React.PureComponent {
     });
   }
 
-  /* Knappar: Add product, Delete accout, Logout*/
-  renderButtonRow() {
-    return (
-      <Row>
-        <Col className='text-right'>
-          <ButtonGroup>
-            <Button onClick={this.openAddItemModal}>Add product {Icon('plus fa-lg')}</Button>
-            <Button color="danger" id="delete-account" onClick={this.deleteAccount} className={(!this.props.credential && this.props.loginProvider !== 'anon') ? "look-disabled" : ''}>Delete account {Icon('close fa-lg')}</Button>
-            <If case={!this.props.credential && this.props.loginProvider !== 'anon'}>
-              <UncontrolledTooltip placement="top" target="delete-account">
-                Log out and log in to enable account deletion
-              </UncontrolledTooltip>
-            </If>
-
-            <Button
-              color="warning"
-              className='logout'
-              onClick={this.logout}
-              loading={this.props.logoutLoading}
-            >
-              Logout {Icon('power-off fa-lg')}
-            </Button>
-          </ButtonGroup>
-        </Col>
-      </Row>
-    );
-  }
   render() {
     // Visar bara första errorn som dyker upp, men skulle kunna ange varje potentiell error på specifika komponenter 
 
@@ -154,35 +124,41 @@ class App extends React.PureComponent {
           </If>
 
         </div>
-        <If case={this.props.pageLoading}>
-          Loading {Loading}
-        </If>
-        <If case={!this.props.pageLoading}>
-          <div className="main-content">
-            {/* not logged in */}
-            <If case={!this.props.uid}>
-              {Login(this)}
-            </If>
-            {/* not logged in */}
-            <If case={this.props.uid}>
-              <Container>
-                {/* Knappar: Add product, Delete accout, Logout*/}
-                {this.renderButtonRow()}
-                {/* Själva produkttabellen */}
-                <Row className='product-grid-row'>
-                  <Col>
-                    <If case={this.props.productsLoading}>
-                      Loading products {Loading}
-                    </If>
-                    <If case={_.keys(this.props.products).length}>
-                      <ProductTable prods={this.props.products} onEdit={this.editItem.bind(this)}/>
-                    </If>
-                  </Col>
-                </Row>
-              </Container>
-            </If>
-          </div>
-        </If>
+        {/* If */ this.props.pageLoading
+          /* Then: */
+          ? <div>Loading Loading <Loading /></div>
+          /* Else : */
+          : <div className="main-content">
+              {/* not logged in */}
+              <If case={!this.props.uid}>
+                {Login(this)}
+              </If>
+              {/* not logged in */}
+              <If case={this.props.uid}>
+                <Container>
+                  {/* Knappar: Add product, Delete accout, Logout*/}
+                  <ActionButtons
+                    {..._.pick(this.props, 'credential', 'loginProvider', 'logoutLoading')}
+                    logout={this.logout}
+                    openModal={this.openAddItemModal}
+                    delete={this.deleteAccount}
+                  />
+                  {/* Själva produkttabellen */}
+                  <Row className='product-grid-row'>
+                    <Col>
+                      <If case={this.props.productsLoading}>
+                        Loading products <Loading />
+                      </If>
+                      <If case={_.keys(this.props.products).length}>
+                        <ProductTable prods={this.props.products} onEdit={this.editItem.bind(this)}/>
+                      </If>
+                    </Col>
+                  </Row>
+                </Container>
+              </If>
+            </div>
+        }
+        
       </div>
     );
   }
@@ -190,14 +166,11 @@ class App extends React.PureComponent {
 
 const mapStateToProps = state => {
   return state.toJSON();
-  // return {
-  //   uid: state.get('uid'),
-  //   pageLoading: state.get('pageLoading')
-  // }
 };
 
 const mapDispatchToProps = dispatch => {
   return {
+    /* jag kastar bara in hela dispatch */
     dispatch,
     login: loginProvider => {
       dispatch({

@@ -179,7 +179,7 @@ export function* saga() {
   // kommer dispatchas från index.js via firebase.auth().onAuthStateChanged
   yield takeLatest('fb:logged in', getDB);
 
-  yield takeEvery('fb:upload', upload)
+  yield takeEvery('fb:upload', upload);
 }
 
 export default saga;
