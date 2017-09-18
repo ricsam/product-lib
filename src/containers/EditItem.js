@@ -49,6 +49,7 @@ class EditItem extends React.PureComponent {
       'save',
       'delete',
       'addVariant',
+      'deleteVariant',
       'updatePrice',
       'updateName',
       'updateVariantName',
