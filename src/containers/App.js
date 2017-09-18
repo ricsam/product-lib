@@ -25,16 +25,24 @@ import {
 
 import ProductTable from './ProductTable'
 
-
+// App är stor, får splitta upp om den t.ex. skulle bli större
 class App extends React.PureComponent {
   constructor(props) {
     super(props);
-    _.bindAll(this, 'login', 'logout', 'deleteAccount', 'editItem', 'openAddItemModal', 'addItem','updateItem', 'deleteItem');
+
+    _.bindAll(this,
+      'login',
+      'logout',
+      'deleteAccount',
+      'editItem',
+      'openAddItemModal',
+      'addItem','updateItem',
+      'deleteItem'
+    );
+
+    /* ifall editItem sätts till en produkt ID kommer korresponderande form-modal att öppnas */
     this.state = {
-      editItem: false,
-      newProds: {},
-      deletedProds: [],
-      updatedProds: {}
+      editItem: false
     };
   }
   login(provider) {
@@ -89,16 +97,36 @@ class App extends React.PureComponent {
       editItem: false,
     });
   }
+
+  /* Knappar: Add product, Delete accout, Logout*/
+  renderButtonRow() {
+    return (
+      <Row>
+        <Col className='text-right'>
+          <ButtonGroup>
+            <Button onClick={this.openAddItemModal}>Add product {Icon('plus fa-lg')}</Button>
+            <Button color="danger" id="delete-account" onClick={this.deleteAccount} className={(!this.props.credential && this.props.loginProvider !== 'anon') ? "look-disabled" : ''}>Delete account {Icon('close fa-lg')}</Button>
+            <If case={!this.props.credential && this.props.loginProvider !== 'anon'}>
+              <UncontrolledTooltip placement="top" target="delete-account">
+                Log out and log in to enable account deletion
+              </UncontrolledTooltip>
+            </If>
+
+            <Button
+              color="warning"
+              className='logout'
+              onClick={this.logout}
+              loading={this.props.logoutLoading}
+            >
+              Logout {Icon('power-off fa-lg')}
+            </Button>
+          </ButtonGroup>
+        </Col>
+      </Row>
+    );
+  }
   render() {
     // Visar bara första errorn som dyker upp, men skulle kunna ange varje potentiell error på specifika komponenter 
-    const errorMsg = this.props.loginError || 
-                     this.props.logoutError ||
-                     this.props.addProductError ||
-                     this.props.productsError ||
-                     this.props.updateProductError ||
-                     this.props.removeProductError;
-
-    const prods = _.omit(_.assign({}, this.props.products, this.state.newProds, this.state.updatedProds), this.state.deletedProds);
 
     return (
       <div className="App">
@@ -119,9 +147,9 @@ class App extends React.PureComponent {
         <div className="App-header">
           <h2>Product library</h2>
 
-          <If case={errorMsg}>
+          <If case={this.props.productsError}>
             <Alert color="danger">
-              <strong>Error: </strong>{errorMsg}
+              <strong>Error: </strong>{this.props.productsError}
             </Alert>
           </If>
 
@@ -130,51 +158,30 @@ class App extends React.PureComponent {
           Loading {Loading}
         </If>
         <If case={!this.props.pageLoading}>
-          <Container className="logged-in">
-            <Row>
-              <Col className="md-12">
-                <If case={!this.props.uid}>
-                  {Login(this)}
-                </If>
-                <If case={this.props.uid}>
-                  <Container fluid>
-                    <Row>
-                      <Col className='text-right'>
-                        <ButtonGroup>
-                          <Button onClick={this.openAddItemModal}>Add product {Icon('plus fa-lg')}</Button>
-                          <Button color="danger" id="delete-account" onClick={this.deleteAccount} className={(!this.props.credential && this.props.loginProvider !== 'anon') ? "look-disabled" : ''}>Delete account {Icon('close fa-lg')}</Button>
-                          <If case={!this.props.credential && this.props.loginProvider !== 'anon'}>
-                            <UncontrolledTooltip placement="top" target="delete-account">
-                              Log out and log in to enable account deletion
-                            </UncontrolledTooltip>
-                          </If>
-
-                          <Button
-                            color="warning"
-                            className='logout'
-                            onClick={this.logout}
-                            loading={this.props.logoutLoading}
-                          >
-                            Logout {Icon('power-off fa-lg')}
-                          </Button>
-                        </ButtonGroup>
-                      </Col>
-                    </Row>
-                    <Row className='product-grid-row'>
-                      <Col>
-                        <If case={this.props.productsLoading}>
-                          Loading products {Loading}
-                        </If>
-                        <If case={_.keys(this.props.products).length}>
-                          <ProductTable prods={prods} onEdit={this.editItem.bind(this)}/>
-                        </If>
-                      </Col>
-                    </Row>
-                  </Container>
-                </If>
-              </Col>
-            </Row>
-          </Container>
+          <div className="main-content">
+            {/* not logged in */}
+            <If case={!this.props.uid}>
+              {Login(this)}
+            </If>
+            {/* not logged in */}
+            <If case={this.props.uid}>
+              <Container>
+                {/* Knappar: Add product, Delete accout, Logout*/}
+                {this.renderButtonRow()}
+                {/* Själva produkttabellen */}
+                <Row className='product-grid-row'>
+                  <Col>
+                    <If case={this.props.productsLoading}>
+                      Loading products {Loading}
+                    </If>
+                    <If case={_.keys(this.props.products).length}>
+                      <ProductTable prods={this.props.products} onEdit={this.editItem.bind(this)}/>
+                    </If>
+                  </Col>
+                </Row>
+              </Container>
+            </If>
+          </div>
         </If>
       </div>
     );

@@ -2,6 +2,11 @@ import React from 'react';
 import {Button as BSB, ButtonGroup} from 'reactstrap';
 
 // Komponent som efterliknar {bool && <Component />} = <If case={bool}><Component /></If>
+// tar props:
+/*
+  el=String (=div by default) som elementet runt children
+  case=Bool som anger huruvida ovanstående element ska renderas eller ej
+*/
 export class If extends React.PureComponent {
   render() {
     if (this.props.case) return React.createElement(this.props.el || 'div', null, this.props.children);
@@ -9,6 +14,11 @@ export class If extends React.PureComponent {
   }
 }
 
+/*
+  Vanlig bootstrap knapp, men man kan även ange prop loading som anger ifall en Loading FA-icon ska visas eller ej.
+  Props:
+    loading=Bool
+*/
 export class Button extends React.PureComponent {
   render() {
     const props = {

@@ -8,11 +8,9 @@ import './styles/index.css';
 import App from './containers/App';
 import registerServiceWorker from './registerServiceWorker';
 
-
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
-
 
 import saga from './state/saga';
 
@@ -47,21 +45,28 @@ const config = {
   messagingSenderId: "841123931115"
 };
 
+
+/* initialize stuff */
 const store = storeCreator(initialState);
-
 store.runSaga(saga);
-
-
-
 
 firebase.initializeApp(config);
 
+// När firebase märker att man loggat in via cookie eller via faktisk inloggning, alternativt loggat ut kommer
+// denna att callas.
 firebase.auth().onAuthStateChanged(function(user) {
   const providerMapping = {
     "google.com": 'google'
   };
+
+  // User is signed in.
   if (user) {
-    // User is signed in.
+
+/*  loginProvider behövs bara för att anonyma konton kan tas bort ASAP,
+    medan e.g. google konton måste återverifieras, (reloggin)
+    Jag vill kunna spegla detta i UI mha loginProvider state.
+    uid, firebase userid, används för att spara Data till DB.
+*/  
     store.dispatch({
       type: "fb:logged in",
       uid: user.uid,

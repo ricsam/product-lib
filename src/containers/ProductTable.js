@@ -11,6 +11,41 @@ import {
 } from './components';
 import * as util from './util';
 
+/*  
+    Databasen har följande struktur: (se nedan)
+    Förklaring:
+      användarid `userid1337` har produkter med ids: `prodid1`, `prodid2`, `prodid3`.
+
+    Hela denna komponent parsar och renderar denna data till en tabell.
+    Alla ids som genereras är uuid.v4
+{
+  "products": {
+    "userid1337" : {
+      "prodid1" : {
+        "name" : "computer",
+        "variants" : {
+          "1c1901de-7109-4878-b316-8f0db8521c5e" : {
+            "name" : "green",
+            "price" : 500
+          },
+          "7410e258-884c-4ce2-a28f-cbcca72a8b8d" : {
+            "name" : "blue",
+            "price" : 1000
+          }
+        }
+      },
+      "prodid2" : {
+        "name" : "ipod",
+        "price" : 123
+      },
+      "prodid3" : {
+        "name" : "plant",
+        "price" : 500
+      }
+    }
+  }
+}
+          */
 export default class ProductTable extends React.PureComponent {
   constructor(props) {
     super(props);

@@ -24,6 +24,22 @@ import {
 import _ from 'lodash';
 import * as util from './util';
 
+/*
+
+  EditItem är bara en stor komponent som renderar en Form in en Modal.
+  Props:
+    newItem -> Om produkten är ny eller ej,
+               dvs om !_.has(products, item) i App.js,
+               Finns som property för att komponenten ska renderas vid nytt item.
+    item -> En UUID på produkten som ska editas
+    onClose -> func
+    onSave -> func
+    onDelete -> func
+    onUpdate -> func
+    data -> Alla produkter 
+
+*/
+
 
 class EditItem extends React.PureComponent {
 
