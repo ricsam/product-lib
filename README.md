@@ -7,8 +7,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 **Up and running**:
 1. git clone https://github.com/iZettle/web-home-assignment_richard-samuelsson.git product-library
-2. git checkout THIS_BRANCH
-3. cd product-library
+2. cd product-library
+3. git checkout richard
 4. yarn install
 
 **Available Scripts**
