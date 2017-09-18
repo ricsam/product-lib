@@ -17,7 +17,7 @@ import * as util from './util';
       användarid `userid1337` har produkter med ids: `prodid1`, `prodid2`, `prodid3`.
 
     Hela denna komponent parsar och renderar denna data till en tabell.
-    Alla ids som genereras är uuid.v4
+    (ps: egentligen är alla genererade ids UUIDs)
 {
   "products": {
     "userid1337" : {
@@ -39,7 +39,7 @@ import * as util from './util';
         "price" : 123
       },
       "prodid3" : {
-        "name" : "plant",
+        "name" : "flower",
         "price" : 500
       }
     }

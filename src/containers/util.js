@@ -38,3 +38,7 @@ export function parseProductProperties(product) {
     variantIds
   }
 }
+
+/* bindar kontext, argument samt ett funktionssamn till fn och ansätter denna funktion till ctx[names[i]] */
+export const makeAnchorMethods = (ctx, fn, names, ...args) =>
+  names.forEach(name => ctx[name] = fn.bind(ctx, name, ...args));

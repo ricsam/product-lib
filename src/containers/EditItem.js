@@ -15,8 +15,8 @@ import {
 
 import {
   Button,
-  Icon,
   TooltippedInput,
+  VariantPriceDelteControlerRow
 } from './components';
 
 import _ from 'lodash';
@@ -43,7 +43,17 @@ class EditItem extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    _.bindAll(this, 'close', 'update', 'save', 'delete', 'addVariant', 'updatePrice', 'updateName', 'updateVariantName');
+    _.bindAll(this,
+      'close',
+      'update',
+      'save',
+      'delete',
+      'addVariant',
+      'updatePrice',
+      'updateName',
+      'updateVariantName',
+      'updateVariantPrice'
+    );
     this.state = {
       name: "",
       price: 0
@@ -51,10 +61,10 @@ class EditItem extends React.PureComponent {
   }
 
   componentWillMount() {
-    if (!this.props.newItem) { // existing item
-      this.setState({
-        ...this.props.data[this.props.item]
-      });
+    if (!this.props.newItem) { // existing item, set the props as state.
+      this.setState((prevState, props) => ({
+        ...props.data[props.item]
+      }));
     } else { // new item
       this.setState({
         name: "",
@@ -73,21 +83,31 @@ class EditItem extends React.PureComponent {
     this.props.onSave(this.props.item, this.state);
   }
   formIsOkey() {
-    return this.state.name !== "" && ( !this.variants || _.every(_.keys(this.state.variants), id => this.state.variants[id].name !== "" ) );
+    return (
+      /* formIsOkey return TRUE if product name !== '' */
+      this.state.name !== ""
+      /* and... */
+      &&
+      (    /* if variants does not exist... */
+                    !this.state.variants
+        || /* or in case **every** variant name !== '' */
+        _.every(_.keys(this.state.variants), id => this.state.variants[id].name !== "" )
+      )
+    );
   }
   delete() {
     this.props.onDelete(this.props.item);
   }
   addVariant() {
-    this.setState({
+    this.setState((prevState, props) => ({
       price: null,
       variants: _.set({...(this.state.variants || {})}, uuid(), {
         name: "",
         price: 0
       }),
-    });
+    }));
   }
-  updateName(id, ev) {
+  updateName(ev, id) {
     const name = ev.currentTarget.value;
     this.setState({
       name
@@ -99,38 +119,41 @@ class EditItem extends React.PureComponent {
       price
     });
   }
-  updateVariantName(id, ev) {
-    this.setState({
-      variants: _.set({...this.state.variants}, `${id}.name`, ev.currentTarget.value)
+  updateVariantName(ev, id) {
+    const name = ev.currentTarget.value;
+    this.setState((prevState, props) => ({
+      variants: _.set({...this.state.variants}, `${id}.name`, name)
+    }));
+  }
+  updateVariantPrice(ev, id) {
+    const textVal = ev.currentTarget.value;
+    let value = Number(textVal);
+    this.setState((prevState, props) => {
+      if ((isNaN(value) || value < 0) && textVal !== "") value = prevState.variants[id].price;
+      return {
+        variants: _.set({...prevState.variants}, `${id}.price`, value)
+      };
     });
   }
-  updateVariantPrice(id, ev) {
-    let value = Number(ev.currentTarget.value);
-    if ((isNaN(value) || value < 0) && ev.currentTarget.value !== "") value = this.state.variants[id].price;
-    this.setState({
-      variants: _.set({...this.state.variants}, `${id}.price`, value)
+  deleteVariant(ev, id) {
+    this.setState((prevState, props) => {
+      const variants = _.omit(prevState.variants, id);
+      if (_.keys(variants).length) {
+        return { variants };
+      } else {
+        return {
+          variants: null,
+          price: prevState.variants[id].price // bibehåll variantpriset när den sista varianten deletas.
+        };
+      }
     });
-  }
-  deleteVariant(id, ev) {
-    console.log(id);
-    const variants = _.omit(this.state.variants, id)
-    if (_.keys(variants).length) {
-      this.setState({
-        variants,
-      });
-    } else {
-      this.setState({
-        variants: null,
-        price: this.state.variants[id].price // bibehåll variantpriset när den sista varianten deletas.
-      });
-    }
   }
 
   render() {
     /* grab the price in the form of min - max */
     const { price } = util.parseProductProperties(this.state);
     return (
-      <Modal isOpen={!!this.props.item} toggle={this.close}>
+      <Modal isOpen={true} toggle={this.close}>
         <ModalHeader toggle={this.close}>
           <Container>
             {this.props.newItem ? 'Adding' : 'Editing'} product
@@ -188,18 +211,14 @@ class EditItem extends React.PureComponent {
                       The name cannot be empty
                     </TooltippedInput>
                   </Col>
-                  <Col xs="6">
-                    <Row className="no-gutters">
-                      <Col xs="9">
-                        <Input type="text" value={this.state.variants[id].price} onChange={this.updateVariantPrice.bind(this, id)} />
-                      </Col>
-                      <Col xs="3" className="text-right">
-                        <Button color="danger" className="fill" onClick={this.deleteVariant.bind(this, id)}>{Icon('times')}</Button>
-                      </Col>
-                    </Row>
-                  </Col>
+                  <VariantPriceDelteControlerRow
+                    id={id}
+                    value={this.state.variants[id].price}
+                    onChange={this.updateVariantPrice}
+                    onClick={this.deleteVariant}
+                  />
                 </Row>
-              )
+              );
             })}
             <Row className="form-spacing">
               <Col>

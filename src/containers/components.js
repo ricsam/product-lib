@@ -1,6 +1,7 @@
 import React from 'react';
 import {Button as BSB, ButtonGroup, Row, Col, UncontrolledTooltip, Input} from 'reactstrap';
 import _ from 'lodash'
+import { makeAnchorMethods } from './util';
 
 // Komponent som efterliknar {bool && <Component />} = <If case={bool}><Component /></If>
 // tar props:
@@ -88,11 +89,11 @@ export class TooltippedInput extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    this.change = this.change.bind(this, this.props.id);
+    this.onChange = this.onChange.bind(this, this.props.id);
   }
 
-  change(id, ev) {
-    this.props.onChange(id, ev);
+  onChange(id, ev) {
+    this.props.onChange(ev, id);
   }
 
   render() {
@@ -100,7 +101,7 @@ export class TooltippedInput extends React.PureComponent {
     <Input
       type="text"
       id={"TooltippedInput-" + this.props.id}
-      onChange={this.change}
+      onChange={this.onChange}
       {..._.pick(this.props, 'className', 'value')}
     />
     <If case={this.props.case}>
@@ -110,4 +111,43 @@ export class TooltippedInput extends React.PureComponent {
     </If>
     </div>);
   }
+}
+
+export class VariantPriceDelteControlerRow extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    makeAnchorMethods(this, this.eventHandler, ['onChange', 'onClick'], this.props.id);
+
+  }
+  eventHandler(name, ...args) {
+    /* args = [id, ev] så jag vänder bara på args här  */
+    /* sista argumentet kommer vara event, anroppa e.g. onChange(ev, id) */
+    this.props[name](_.last(args), ..._.initial(args));
+  }
+
+  render() {
+    return (
+      <Col xs="6">
+        <Row className="no-gutters">
+          <Col xs="9">
+            <Input
+              type="text"
+              value={this.props.value}
+              onChange={this.onChange} />
+          </Col>
+          <Col xs="3" className="text-right">
+            <Button
+              color="danger"
+              className="fill"
+              onClick={this.onClick}
+            >
+              {Icon('times')}
+            </Button>
+          </Col>
+        </Row>
+      </Col>
+    );
+  }
+
 }

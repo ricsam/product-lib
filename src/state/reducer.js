@@ -4,9 +4,6 @@ const initialState = fromJS({});
 
 function reducer(state = initialState, action) {
   switch (action.type) {
-    case "@@redux/INIT":
-      /* initialize */
-      return state;
     case "fb:logged in":
       /* resetar alla errors o sånt (lite redundant),
          samt påbörjar nedladdning av produkterna från DB */
@@ -75,7 +72,7 @@ function reducer(state = initialState, action) {
         .set('credential', action.credential);
 
     // CREATE, UPDATE, DELETE operations,
-    // e.g. pågående updatering av en produkt trackas i state.products
+    // Pågående updateringar av en produkt trackas i state.products
     case "fb:upload":
       /* För delete så är det bara att "tagga" en product med status,
          medan för de andra operationsarna så vill vi även updatera datan */
@@ -99,7 +96,7 @@ function reducer(state = initialState, action) {
 
     case `fb:upload error`:
       return state
-        /* det här är för att signalera specifikt vilken komponent som inte kunde updateras */
+        /* det här är för att signalera specifikt vilken produkt som inte kunde updateras */
         .setIn(['products', action.id, 'status'], fromJS({operation: action.operation, state: 'error', message: action.message}))
 
     default:
