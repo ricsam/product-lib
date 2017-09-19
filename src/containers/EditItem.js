@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import uuid from 'uuid/v4';
 
 import {
@@ -39,7 +40,18 @@ import * as util from './util';
 */
 
 
+
 class EditItem extends React.PureComponent {
+  static propTypes = {
+    item: PropTypes.string.isRequired,
+    newItem: PropTypes.bool,
+    onClose: PropTypes.func,
+    onSave: PropTypes.func,
+    onDelete: PropTypes.func,
+    onUpdate: PropTypes.func,
+    data: PropTypes.object,
+  };
+
 
   constructor(props) {
     super(props);
@@ -62,16 +74,18 @@ class EditItem extends React.PureComponent {
   }
 
   componentWillMount() {
-    if (!this.props.newItem) { // existing item, set the props as state.
-      this.setState((prevState, props) => ({
-        ...props.data[props.item]
-      }));
-    } else { // new item
-      this.setState({
-        name: "",
-        price: 0
-      })
-    }
+    this.setState((prevState, props) => {
+      if (_.has(props, 'newItem') && props.newItem) { // existing item, set the props as state.
+        return {
+          ...props.data[props.item]
+        };
+      } else { // new item
+        return {
+          name: "",
+          price: 0
+        };
+      }
+    });
   }
 
   close() {

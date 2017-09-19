@@ -15,25 +15,11 @@ import saga from './state/saga';
 
 import storeCreator from './state/store';
 
+import getInitialState from './state/initialState';
+
 // The initial state of the App
-const initialState = {
+const initialState = getInitialState();
 
-  pageLoading: true, /* as it is loading in the beginning */
-
-  uid: '', /* falsy or id <String> */
-  loginProvider: '', /* anon, google or github available */
-
-  logoutLoading: false,
-  logoutError: false,
-
-  loginLoading: false,
-  loginError: false,
-
-  products: {},
-  productsLoading: false, /* READ */
-  productsError: false,
-
-};
 
 const config = {
   apiKey: "AIzaSyD-OIFGUCzyuJoVbAM8s9Dt8otAPlW-ZWI",

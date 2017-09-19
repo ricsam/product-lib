@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {Button as BSB, ButtonGroup, Row, Col, UncontrolledTooltip, Input} from 'reactstrap';
 import _ from 'lodash'
 import { makeAnchorMethods } from './util';
@@ -86,6 +87,12 @@ export const ActionButtons = props => (
 );
 
 export class TooltippedInput extends React.PureComponent {
+
+  static propTypes = {
+    id: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+  };
+
 
   constructor(props) {
     super(props);

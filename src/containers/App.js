@@ -39,7 +39,7 @@ class App extends React.PureComponent {
 
     /* ifall editItem sätts till en produkt ID kommer korresponderande form-modal att öppnas */
     this.state = {
-      editItem: false
+      editItem: ''
     };
   }
   login(provider) {
@@ -55,9 +55,9 @@ class App extends React.PureComponent {
     });
   }
   editItem(item) {
-    this.setState({
-      editItem: this.state.editItem ? false : item
-    });
+    this.setState((prevState, props) => ({
+      editItem: prevState.editItem ? '' : item
+    }));
   }
   openAddItemModal() {
     this.editItem(uuid());
@@ -70,7 +70,7 @@ class App extends React.PureComponent {
       data,
     });
     this.setState({
-      editItem: false
+      editItem: ''
     });
   }
   updateItem(id, data) {
@@ -81,7 +81,7 @@ class App extends React.PureComponent {
       data,
     });
     this.setState({
-      editItem: false,
+      editItem: '',
     });
   }
   deleteItem(id) {
@@ -91,7 +91,7 @@ class App extends React.PureComponent {
       id,
     });
     this.setState({
-      editItem: false,
+      editItem: '',
     });
   }
 
@@ -100,7 +100,7 @@ class App extends React.PureComponent {
       <div className="App">
 
         {/* Modal som öppnas */}
-        <If case={this.state.editItem}>
+        <If case={this.state.editItem !== ''}>
           <EditItem
             newItem={!_.has(this.props.products, this.state.editItem)/* if it is an already existing item or not*/} 
             item={this.state.editItem}
@@ -146,7 +146,7 @@ class App extends React.PureComponent {
                       Loading products <Loading />
                     </If>
                     <If case={_.keys(this.props.products).length}>
-                      <ProductTable prods={this.props.products} onEdit={this.editItem.bind(this)}/>
+                      <ProductTable prods={this.props.products} onEdit={this.editItem}/>
                     </If>
                   </Col>
                 </Row>
