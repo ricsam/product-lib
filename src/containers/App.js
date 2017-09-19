@@ -127,7 +127,7 @@ class App extends React.PureComponent {
         ? <div>Loading Loading <Loading /></div>
         /* Else : */
         : <div className="main-content">
-            {/*If */ !this.props.uid /* -> if logged in*/
+            {/*If */ !this.props.uid /* -> if NOT logged in*/
             /* Then: */
             ? <Login
                 loginLoading={this.props.loginLoading}
