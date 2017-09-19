@@ -20,35 +20,60 @@ export const If = props => props.case
     loading=Bool
 */
 export const Button = ({loading,...props}) => (
-  <BSB {...props} outline>
+  <BSB {...props} outline data-loading={loading}>
     {props.children}{" "}
-    {props.loading && Loading}
+    {loading && <Loading />}
   </BSB>
 );
+
 
 export const Icon = icon => <i className={"fa fa-" + icon} aria-hidden="true"></i>;
 export const Loading = () => <i className="fa fa-cog fa-spin fa-lg" aria-hidden="true"></i>;
 
 
-// en funktion som plattar till koden lite, används bara för rendering av de tre loggin-knapparna
-export const loginButton = (ctx, provider) => (
-  <Button
-    key={provider[1]}
-    loading={ctx.props.loginLoading && ctx.props.loginProvider === provider[1]}
-    onClick={ctx.login.bind(ctx, provider[1])}
-  >
-    {provider[0]}
-  </Button>
-);
+// används bara för rendering av de tre loggin-knapparna
+export class LoginButton extends React.PureComponent {
 
-// plattar till koden lite, renderas i App då this.props.uid === ''
-export const Login = ctx => (
+  constructor(props) {
+    super(props);
+    _.bindAll(this, 'onClick');
+  }
+
+  onClick() {
+    console.log(this.props);
+    this.props.login(this.props.id);
+  }
+
+  render() {
+    const loading = this.props.loginLoading && this.props.loginProvider === this.props.id;
+    return (
+      <Button
+        onClick={this.onClick}
+        loading={loading}
+      >
+        {this.props.children}
+      </Button>
+    );
+  }
+    
+}
+
+// renderas i App då this.props.uid === '', dvs not logged in
+export const Login = props => (
   <div className="login">
     <h2>Login</h2>
     <ButtonGroup>
-      {[['Login anonymously', 'anon'],
-        ['Login using Github (not enabled)', 'github'],
-        ['Login using Google', 'google']].map((p) => loginButton(ctx, p))}
+      {
+        [
+          ['Login anonymously', 'anon'],
+          ['Login using Github (not enabled)', 'github'],
+          ['Login using Google', 'google']
+        ].map(([text, id]) => (
+          <LoginButton {...props} id={id} key={"login-" + id}>
+            {text}
+          </LoginButton>
+        ))
+      }
     </ButtonGroup>
   </div>
 );

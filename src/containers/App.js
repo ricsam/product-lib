@@ -129,7 +129,11 @@ class App extends React.PureComponent {
         : <div className="main-content">
             {/*If */ !this.props.uid /* -> if logged in*/
             /* Then: */
-            ? Login(this)
+            ? <Login
+                loginLoading={this.props.loginLoading}
+                loginProvider={this.props.loginProvider}
+                login={this.login}
+              />
             /* Else: */
             : <Container>
                 {/* Knappar: Add product, Delete accout, Logout*/}
