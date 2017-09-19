@@ -42,6 +42,7 @@ import * as util from './util';
 
 
 class EditItem extends React.PureComponent {
+  
   static propTypes = {
     item: PropTypes.string.isRequired,
     newItem: PropTypes.bool,
@@ -55,6 +56,7 @@ class EditItem extends React.PureComponent {
 
   constructor(props) {
     super(props);
+
     _.bindAll(this,
       'close',
       'update',
@@ -67,25 +69,17 @@ class EditItem extends React.PureComponent {
       'updateVariantName',
       'updateVariantPrice'
     );
-    this.state = {
-      name: "",
-      price: 0
-    }
-  }
 
-  componentWillMount() {
-    this.setState((prevState, props) => {
-      if (_.has(props, 'newItem') && props.newItem) { // existing item, set the props as state.
-        return {
-          ...props.data[props.item]
-        };
-      } else { // new item
-        return {
-          name: "",
-          price: 0
-        };
-      }
-    });
+    if (_.has(props, 'newItem') && props.newItem) { // existing item, set the props as state.
+      this.state = {
+        ...props.data[props.item]
+      };
+    } else { // new item
+      this.state = {
+        name: '',
+        price: 0
+      };
+    }
   }
 
   close() {
