@@ -42,7 +42,7 @@ import * as util from './util';
 
 
 class EditItem extends React.PureComponent {
-  
+
   static propTypes = {
     item: PropTypes.string.isRequired,
     newItem: PropTypes.bool,
@@ -70,7 +70,7 @@ class EditItem extends React.PureComponent {
       'updateVariantPrice'
     );
 
-    if (_.has(props, 'newItem') && props.newItem) { // existing item, set the props as state.
+    if (_.has(props, 'newItem') && !props.newItem) { // not new item, AKA: existing item, set the props as state.
       this.state = {
         ...props.data[props.item]
       };
@@ -94,7 +94,7 @@ class EditItem extends React.PureComponent {
   formIsOkey() {
     return (
       /* formIsOkey return TRUE if product name !== '' */
-      this.state.name !== ""
+      this.state.name !== ''
       /* and... */
       &&
       (    /* if variants does not exist... */
