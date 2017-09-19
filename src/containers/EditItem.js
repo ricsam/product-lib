@@ -70,7 +70,8 @@ class EditItem extends React.PureComponent {
       'updateVariantPrice'
     );
 
-    if (_.has(props, 'newItem') && !props.newItem) { // not new item, AKA: existing item, set the props as state.
+    if (_.has(props, 'newItem') && !props.newItem) { // not new item, AKA: existing item.
+      // Set the product data as state.
       this.state = {
         ...props.data[props.item]
       };
@@ -100,7 +101,7 @@ class EditItem extends React.PureComponent {
       (    /* if variants does not exist... */
                     !this.state.variants
         || /* or in case **every** variant name !== '' */
-        _.every(_.keys(this.state.variants), id => this.state.variants[id].name !== "" )
+        _.every(_.keys(this.state.variants), id => this.state.variants[id].name !== '' )
       )
     );
   }
@@ -109,9 +110,11 @@ class EditItem extends React.PureComponent {
   }
   addVariant() {
     this.setState((prevState, props) => ({
+      /* by setting price to null it will be deleted from firebase DB
+         and thus replaced by the price given in the variants */
       price: null,
       variants: _.set({...(this.state.variants || {})}, uuid(), {
-        name: "",
+        name: '',
         price: 0
       }),
     }));
@@ -138,7 +141,7 @@ class EditItem extends React.PureComponent {
     const textVal = ev.currentTarget.value;
     let value = Number(textVal);
     this.setState((prevState, props) => {
-      if ((isNaN(value) || value < 0) && textVal !== "") value = prevState.variants[id].price;
+      if ((isNaN(value) || value < 0) && textVal !== '') value = prevState.variants[id].price;
       return {
         variants: _.set({...prevState.variants}, `${id}.price`, value)
       };
@@ -181,7 +184,7 @@ class EditItem extends React.PureComponent {
                   className={this.state.name === '' ? 'form-control-warning' : ''}
                   value={this.state.name}
                   onChange={this.updateName}
-                  case={this.state.name === ""}
+                  case={this.state.name === ''}
                 >
                   The name cannot be empty
                 </TooltippedInput>
@@ -191,7 +194,7 @@ class EditItem extends React.PureComponent {
                   type="text"
                   name="price"
                   id="price"
-                  disabled={this.state.price === null}
+                  disabled={this.state.price === null || !_.has(this.state, 'price')}
                   value={price}
                   onChange={this.updatePrice}
                 />
