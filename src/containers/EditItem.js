@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import {connect} from 'react-redux';
+import { createSelector } from 'reselect';
 import EditItemComponent from './EditItemComponent';
 
 class EditItem extends React.PureComponent {
@@ -61,12 +62,16 @@ class EditItem extends React.PureComponent {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    products: state.get('products').toJSON(),
-    editItem: state.get('editItem'),
-  };
-};
+
+const getProducts = createSelector(
+  (state) => state.get('products'),
+  (products) => products.toJSON()
+);
+
+const mapStateToProps = (state) => ({
+  products: getProducts(state),
+  editItem: state.get('editItem'),
+});
 
 const mapDispatchToProps = dispatch => ({ dispatch });
 
