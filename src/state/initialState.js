@@ -1,20 +1,35 @@
-const getInitialState = () => ({
+const getInitialState = (where) => {
 
-  pageLoading: true, /* as it is loading in the beginning */
+  switch (where) {
+    case 'app':
+      return {
+        pageLoading: true, /* as it is loading in the beginning */
+        editItem: '',
+      };
+    case 'login':
+      return {
+        uid: '', /* falsy or id <String> */
+        loginProvider: '', /* anon, google or github available */
 
-  uid: '', /* falsy or id <String> */
-  loginProvider: '', /* anon, google or github available */
+        logoutLoading: false,
+        logoutError: false,
 
-  logoutLoading: false,
-  logoutError: false,
+        loginLoading: false,
+        loginError: false,
 
-  loginLoading: false,
-  loginError: false,
+      };
+    case 'products':
+      return {
+        products: {},
+        productsLoading: false, /* READ */
+        productsError: false,
+      };
+    default:
+      return {}
+  }
 
-  products: {},
-  productsLoading: false, /* READ */
-  productsError: false,
 
-});
+
+};
 
 export default getInitialState;

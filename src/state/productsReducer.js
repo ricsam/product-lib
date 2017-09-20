@@ -1,54 +1,20 @@
 import { fromJS } from 'immutable';
+import getInitialState from './initialState';
 
-const initialState = fromJS({});
+const initialState = fromJS(getInitialState('products'));
 
-function reducer(state = initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case "fb:logged in":
       /* resetar alla errors o sånt (lite redundant),
          samt påbörjar nedladdning av produkterna från DB */
       return state
-        .set('uid', action.uid)
-        .set('loginProvider', action.loginProvider) /* e.g. google or github or just anon */
-        .set('loginLoading', false)
-        .set('pageLoading', false)
-        .set('loginError', false)
         .set('productsLoading', true)
         .set('productsError', false);
 
     case "fb:logged out":
       /* resetar allt till inital state */
-      return state
-        .set('uid', '')
-        .set('loginProvider', '')
-        .set('products', {})
-        .set('logoutLoading', false)
-        .set('pageLoading', false)
-        .set('logoutError', false);
-
-    case 'fb:logout':
-      // påbörjar utloggning
-      return state
-        .set('logoutLoading', true)
-        .set('logoutError', false);
-
-    case "fb:login":
-      // påbörjar inloggning
-      return state
-        .set('loginLoading', true)
-        .set('loginProvider', action.loginProvider) /* e.g. google or github or just anon */
-        .set('loginError', false);
-
-    case "fb:login error":
-      return state
-        .set('loginLoading', false)
-        .set('loginProvider', '')
-        .set('loginError', action.message);
-
-    case "fb:logout error":
-      return state
-        .set('logoutLoading', false)
-        .set('logoutError', action.message);
+      return initialState;
 
     // den initiella nedladdningen av produktbiblioteket
     case "fb:db loaded":
@@ -62,14 +28,6 @@ function reducer(state = initialState, action) {
         .set('productsLoading', false)
         .set('productsError', action.message);
 
-    /* vill bara belysa att denna action kan dispatchas,
-       i slutändan kommer fb:logged out att dispatchas från firebase api */
-    case "fb:delete user":
-      return state;
-
-    case "fb:set credential":
-      return state
-        .set('credential', action.credential);
 
     // CREATE, UPDATE, DELETE operations,
     // Pågående updateringar av en produkt trackas i state.products
@@ -104,4 +62,3 @@ function reducer(state = initialState, action) {
   }
 }
 
-export default reducer;

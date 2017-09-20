@@ -2,7 +2,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { fromJS } from 'immutable';
 
-import reducer from './reducer';
+import reducer from './appReducer';
 
 
 /* Funktion som skapar redux store med middleware.

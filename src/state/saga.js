@@ -167,7 +167,7 @@ async function fbRemoveUser(credential) {
 
 // denna funktion kommer från index.js att dispatcha logout action.
 function* deleteUser() {
-  const credential = yield select(state => state.get('credential') || false);
+  const credential = yield select(state => state.get('login').get('credential') || false);
   yield call(fbRemoveUser, credential);
 }
 

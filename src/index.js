@@ -18,7 +18,7 @@ import storeCreator from './state/store';
 import getInitialState from './state/initialState';
 
 // The initial state of the App
-const initialState = getInitialState();
+const initialState = getInitialState('root');
 
 
 const config = {

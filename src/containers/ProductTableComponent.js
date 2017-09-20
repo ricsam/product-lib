@@ -46,7 +46,7 @@ import * as util from './util';
   }
 }
           */
-export default class ProductTable extends React.PureComponent {
+export default class ProductTableComponent extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {

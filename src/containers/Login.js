@@ -11,9 +11,15 @@ class Login extends React.PureComponent {
 
   constructor(props) {
     super(props);
+    _.bindAll(this, 'login');
   }
 
-  login() {}
+  login(loginProvider) {
+    this.props.dispatch({
+      type: "fb:login",
+      loginProvider
+    });
+  }
 
   render() {
     return (
@@ -34,9 +40,9 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return (
+  return {
     dispatch
-  );
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
