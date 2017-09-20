@@ -4,19 +4,20 @@ import {
   Table
 } from 'reactstrap';
 import {
-  Button,
   If,
   Icon,
-  Loading
+  Loading,
+  PassIdButton
 } from './components';
 import * as util from './util';
+
 
 /*  
     Databasen har följande struktur: (se nedan)
     Förklaring:
       användarid `userid1337` har produkter med ids: `prodid1`, `prodid2`, `prodid3`.
 
-    Hela denna komponent parsar och renderar denna data till en tabell.
+    Hela denna komponent parsar och renderar sån här data till en tabell.
     (ps: egentligen är alla genererade ids UUIDs)
 {
   "products": {
@@ -52,6 +53,7 @@ export default class ProductTableComponent extends React.PureComponent {
     this.state = {
       expand: false
     };
+    _.bindAll(this, 'expand', 'edit');
   }
   expand(id) {
     this.setState({
@@ -90,11 +92,11 @@ export default class ProductTableComponent extends React.PureComponent {
                 <td>
                   <If case={variantIds.length}>
                     {variantIds.length}
-                    <Button className='seamless' onClick={this.expand.bind(this, id)}>{Icon('angle-' + (this.state.expand === id ? 'up' : 'down'))}</Button>
+                    <PassIdButton className='seamless' onClick={this.expand} id={id}>{Icon('angle-' + (this.state.expand === id ? 'up' : 'down'))}</PassIdButton>
                   </If>
                 </td>
                 <td>{price} €</td>
-                <td><Button color="link" className='seamless' onClick={this.edit.bind(this, id)}>Edit</Button></td>
+                <td><PassIdButton color="link" className='seamless' onClick={this.edit} id={id}>Edit</PassIdButton></td>
               </tr>)
             ];
 

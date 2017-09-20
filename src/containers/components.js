@@ -31,8 +31,12 @@ export const Icon = icon => <i className={"fa fa-" + icon} aria-hidden="true"></
 export const Loading = () => <i className="fa fa-cog fa-spin fa-lg" aria-hidden="true"></i>;
 
 
-// används bara för rendering av de tre loggin-knapparna
-export class LoginButton extends React.PureComponent {
+export class PassIdButton extends React.PureComponent {
+
+  static propTypes = {
+    id: PropTypes.string.isRequired,
+    onClick: PropTypes.func.isRequired,
+  };
 
   constructor(props) {
     super(props);
@@ -40,9 +44,23 @@ export class LoginButton extends React.PureComponent {
   }
 
   onClick() {
-    console.log(this.props);
-    this.props.login(this.props.id);
+    this.props.onClick(this.props.id);
   }
+
+  render() {
+    return (
+      <Button
+        {...this.props}
+        onClick={this.onClick}
+      >
+        {this.props.children}
+      </Button>
+    );
+  }
+}
+
+// används bara för rendering av de tre loggin-knapparna
+export class LoginButton extends PassIdButton {
 
   render() {
     const loading = this.props.loginLoading && this.props.loginProvider === this.props.id;
@@ -69,7 +87,7 @@ export const Login = props => (
           ['Login using Github (not enabled)', 'github'],
           ['Login using Google', 'google']
         ].map(([text, id]) => (
-          <LoginButton {...props} id={id} key={"login-" + id}>
+          <LoginButton {...props} onClick={props.login} id={id} key={"login-" + id}>
             {text}
           </LoginButton>
         ))
@@ -145,7 +163,7 @@ export class TooltippedInput extends React.PureComponent {
   }
 }
 
-export class VariantPriceDelteControlerRow extends React.PureComponent {
+export class VariantPriceDeleteControlerRow extends React.PureComponent {
   constructor(props) {
     super(props);
 

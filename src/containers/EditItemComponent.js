@@ -17,7 +17,7 @@ import {
 import {
   Button,
   TooltippedInput,
-  VariantPriceDelteControlerRow
+  VariantPriceDeleteControlerRow
 } from './components';
 
 import _ from 'lodash';
@@ -223,7 +223,7 @@ class EditItemComponent extends React.PureComponent {
                       The name cannot be empty
                     </TooltippedInput>
                   </Col>
-                  <VariantPriceDelteControlerRow
+                  <VariantPriceDeleteControlerRow
                     id={id}
                     value={this.state.variants[id].price}
                     onChange={this.updateVariantPrice}
