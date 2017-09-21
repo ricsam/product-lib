@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import uuid from 'uuid/v4';
+import React from "react";
+import PropTypes from "prop-types";
+import uuid from "uuid/v4";
 
 import {
   Container,
@@ -10,18 +10,17 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Input,
-} from 'reactstrap';
-
+  Input
+} from "reactstrap";
 
 import {
   Button,
   TooltippedInput,
   VariantPriceDeleteControlerRow
-} from './components';
+} from "./components";
 
-import _ from 'lodash';
-import * as util from './util';
+import _ from "lodash";
+import * as util from "./util";
 
 /*
 
@@ -39,10 +38,7 @@ import * as util from './util';
 
 */
 
-
-
 class EditItemComponent extends React.PureComponent {
-
   static propTypes = {
     item: PropTypes.string.isRequired,
     newItem: PropTypes.bool,
@@ -50,34 +46,36 @@ class EditItemComponent extends React.PureComponent {
     onSave: PropTypes.func,
     onDelete: PropTypes.func,
     onUpdate: PropTypes.func,
-    data: PropTypes.object,
+    data: PropTypes.object
   };
-
 
   constructor(props) {
     super(props);
 
-    _.bindAll(this,
-      'close',
-      'update',
-      'save',
-      'delete',
-      'addVariant',
-      'deleteVariant',
-      'updatePrice',
-      'updateName',
-      'updateVariantName',
-      'updateVariantPrice'
+    _.bindAll(
+      this,
+      "close",
+      "update",
+      "save",
+      "delete",
+      "addVariant",
+      "deleteVariant",
+      "updatePrice",
+      "updateName",
+      "updateVariantName",
+      "updateVariantPrice"
     );
 
-    if (_.has(props, 'newItem') && !props.newItem) { // not new item, AKA: existing item.
+    if (_.has(props, "newItem") && !props.newItem) {
+      // not new item, AKA: existing item.
       // Set the product data as state.
       this.state = {
         ...props.data[props.item]
       };
-    } else { // new item
+    } else {
+      // new item
       this.state = {
-        name: '',
+        name: "",
         price: 0
       };
     }
@@ -95,14 +93,13 @@ class EditItemComponent extends React.PureComponent {
   formIsOkey() {
     return (
       /* formIsOkey return TRUE if product name !== '' */
-      this.state.name !== ''
+      this.state.name !== "" /* if variants does not exist... */ &&
       /* and... */
-      &&
-      (    /* if variants does not exist... */
-                    !this.state.variants
-        || /* or in case **every** variant name !== '' */
-        _.every(_.keys(this.state.variants), id => this.state.variants[id].name !== '' )
-      )
+      (!this.state.variants /* or in case **every** variant name !== '' */ ||
+        _.every(
+          _.keys(this.state.variants),
+          id => this.state.variants[id].name !== ""
+        ))
     );
   }
   delete() {
@@ -113,10 +110,10 @@ class EditItemComponent extends React.PureComponent {
       /* by setting price to null it will be deleted from firebase DB
          and thus replaced by the price given in the variants */
       price: null,
-      variants: _.set({...(this.state.variants || {})}, uuid(), {
-        name: '',
+      variants: _.set({ ...(this.state.variants || {}) }, uuid(), {
+        name: "",
         price: 0
-      }),
+      })
     }));
   }
   updateName(ev, id) {
@@ -134,16 +131,17 @@ class EditItemComponent extends React.PureComponent {
   updateVariantName(ev, id) {
     const name = ev.currentTarget.value;
     this.setState((prevState, props) => ({
-      variants: _.set({...this.state.variants}, `${id}.name`, name)
+      variants: _.set({ ...this.state.variants }, `${id}.name`, name)
     }));
   }
   updateVariantPrice(ev, id) {
     const textVal = ev.currentTarget.value;
     let value = Number(textVal);
     this.setState((prevState, props) => {
-      if ((isNaN(value) || value < 0) && textVal !== '') value = prevState.variants[id].price;
+      if ((isNaN(value) || value < 0) && textVal !== "")
+        value = prevState.variants[id].price;
       return {
-        variants: _.set({...prevState.variants}, `${id}.price`, value)
+        variants: _.set({ ...prevState.variants }, `${id}.price`, value)
       };
     });
   }
@@ -168,7 +166,7 @@ class EditItemComponent extends React.PureComponent {
       <Modal isOpen={true} toggle={this.close}>
         <ModalHeader toggle={this.close}>
           <Container>
-            {this.props.newItem ? 'Adding' : 'Editing'} product
+            {this.props.newItem ? "Adding" : "Editing"} product
           </Container>
         </ModalHeader>
         <ModalBody>
@@ -181,10 +179,12 @@ class EditItemComponent extends React.PureComponent {
               <Col xs="6">
                 <TooltippedInput
                   id={"item-" + this.state.item}
-                  className={this.state.name === '' ? 'form-control-warning' : ''}
+                  className={
+                    this.state.name === "" ? "form-control-warning" : ""
+                  }
                   value={this.state.name}
                   onChange={this.updateName}
-                  case={this.state.name === ''}
+                  case={this.state.name === ""}
                 >
                   The name cannot be empty
                 </TooltippedInput>
@@ -194,7 +194,9 @@ class EditItemComponent extends React.PureComponent {
                   type="text"
                   name="price"
                   id="price"
-                  disabled={this.state.price === null || !_.has(this.state, 'price')}
+                  disabled={
+                    this.state.price === null || !_.has(this.state, "price")
+                  }
                   value={price}
                   onChange={this.updatePrice}
                 />
@@ -209,32 +211,41 @@ class EditItemComponent extends React.PureComponent {
               <Col xs="6">Variant name</Col>
               <Col xs="6">Variant price</Col>
             </Row>
-            {this.state.variants && _.keys(this.state.variants).map(id => {
-              return (
-                <Row key={id} className="form-spacing">
-                  <Col xs="6">
-                    <TooltippedInput
+            {this.state.variants &&
+              _.keys(this.state.variants).map(id => {
+                return (
+                  <Row key={id} className="form-spacing">
+                    <Col xs="6">
+                      <TooltippedInput
+                        id={id}
+                        className={
+                          this.state.variants[id].name === "" ? (
+                            "form-control-warning"
+                          ) : (
+                            ""
+                          )
+                        }
+                        value={this.state.variants[id].name}
+                        onChange={this.updateVariantName}
+                        case={this.state.variants[id].name === ""}
+                      >
+                        The name cannot be empty
+                      </TooltippedInput>
+                    </Col>
+                    <VariantPriceDeleteControlerRow
                       id={id}
-                      className={this.state.variants[id].name === '' ? 'form-control-warning' : ''}
-                      value={this.state.variants[id].name}
-                      onChange={this.updateVariantName}
-                      case={this.state.variants[id].name === ''}
-                    >
-                      The name cannot be empty
-                    </TooltippedInput>
-                  </Col>
-                  <VariantPriceDeleteControlerRow
-                    id={id}
-                    value={this.state.variants[id].price}
-                    onChange={this.updateVariantPrice}
-                    onClick={this.deleteVariant}
-                  />
-                </Row>
-              );
-            })}
+                      value={this.state.variants[id].price}
+                      onChange={this.updateVariantPrice}
+                      onClick={this.deleteVariant}
+                    />
+                  </Row>
+                );
+              })}
             <Row className="form-spacing">
               <Col>
-                <Button color="success" block onClick={this.addVariant}>Add variant</Button>
+                <Button color="success" block onClick={this.addVariant}>
+                  Add variant
+                </Button>
               </Col>
             </Row>
           </Container>
@@ -246,24 +257,20 @@ class EditItemComponent extends React.PureComponent {
               disabled={!this.formIsOkey()}
               onClick={this.props.newItem ? this.save : this.update}
             >
-              {this.props.newItem ? 'Save' : 'Update'}
+              {this.props.newItem ? "Save" : "Update"}
             </Button>
 
             <Button
               color="danger"
               onClick={this.props.newItem ? this.close : this.delete}
             >
-              {this.props.newItem ? 'Cancel' : 'Delete'}
+              {this.props.newItem ? "Cancel" : "Delete"}
             </Button>
-
           </Container>
         </ModalFooter>
-      </Modal>      
-
+      </Modal>
     );
   }
-
 }
-
 
 export default EditItemComponent;

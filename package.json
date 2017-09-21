@@ -33,6 +33,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "babel-eslint": "^8.0.0",
     "jsdom": "^11.2.0",
     "redux-saga-tester": "^1.0.353"
   }
